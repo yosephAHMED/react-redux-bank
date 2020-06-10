@@ -2,18 +2,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {} from '../store/reducers/bankReducer';
+import {depositFiftyActionCreator} from '../store/reducers/bankReducer';
 
-// Component
-function Atm() {
+// Component -- functional props needs to be a parameter so we can access props
+function Atm(props) {
+  console.log({ props });
+
   return (
     <div className="atm">
       <div className="terminal">
-        <h1 className="balance">$ 0</h1>
+        <h1 className="balance">$ {props.balance}</h1>
       </div>
 
       <div className="terminal">
-        <button type="button" onClick={() => console.log('Deposit $ 50')}>
+        <button type="button" onClick={() => props.depositFiftyAction() }>
           Deposit $ 50
         </button>
 
@@ -33,20 +35,35 @@ function Atm() {
   );
 }
 
-// Container
+// Container to handle reading (mapState) and writing (mapDispatch) in regards to the redux store;
+// I want to be able to react with that reducer function
+
 const mapStateToProps = state => {
   console.log('state in mapStateToProps: ', state);
 
-  return {};
+  return {
+    // make the balance accesible to the component. Retrieve it from the state.
+    balance: state.bank.balance,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   console.log('dispatch in mapDispatchToProps: ', dispatch);
 
-  return {};
+  return {
+    // dispatch the action creator so it can be used
+    // dispatching creator, you get the pure function as a result
+    depositFiftyAction() {
+      dispatch(depositFiftyActionCreator())
+      // action will be mapped into props
+    }
+
+  };
 };
 // Please refactor mapStateToProps and mapDispatchToProps into implicitly returning functions rather than explicitly returning ones once you get everything up and running
 
+// Establish a connection to the Redux store from this component
+// Merge 'this.props' object of the component and object returned from mapState
 export default connect(
   mapStateToProps,
   mapDispatchToProps
