@@ -1,16 +1,29 @@
 // Initial State
 const initialState = {
-  // balance component to track user balance in store
   balance: 0,
 };
 
 // Actions Types
 const DEPOSIT_FIFTY = 'DEPOSIT_FIFTY';
-
+const DEPOSIT_HUNDRED = 'DEPOSIT_HUNDRED';
+const WITHDRAW_FIFTY = 'WITHDRAW_FIFTY';
+const WITHDRAW_HUNDRED = 'WITHDRAW_HUNDRED';
 
 // Action Creators
 export const depositFiftyActionCreator = () => ({
   type: DEPOSIT_FIFTY,
+});
+
+export const depositHundredActionCreator = () => ({
+  type: DEPOSIT_HUNDRED,
+});
+
+export const withdrawFiftyActionCreator = () => ({
+  type: WITHDRAW_FIFTY,
+});
+
+export const withdrawHundredActionCreator = () => ({
+  type: WITHDRAW_HUNDRED,
 });
 
 // Reducer
@@ -19,13 +32,27 @@ const bankReducer = (state = initialState, action) => {
     // Your cases here
     case DEPOSIT_FIFTY:
       return {
-        // we don't want to overrite any data, IMMUTABILITY IS KEY
-        // return contains object that is the new state
-        // ...state puts whatever state we have into the object
         ...state,
-        // we are updating state of balance, so take CURRENT value of balance and add 50
         balance: state.balance + 50,
-      }
+      };
+
+    case DEPOSIT_HUNDRED:
+      return {
+        ...state,
+        balance: state.balance + 100,
+      };
+
+    case WITHDRAW_FIFTY:
+      return {
+        ...state,
+        balance: state.balance - 50,
+      };
+
+    case WITHDRAW_HUNDRED:
+      return {
+        ...state,
+        balance: state.balance - 100,
+      };
 
     default:
       return state;
