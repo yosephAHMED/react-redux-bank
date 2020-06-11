@@ -1,75 +1,111 @@
 // Imports
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
   depositFiftyActionCreator,
   depositHundredActionCreator,
+  depositCustomAmountActionCreator,
   withdrawFiftyActionCreator,
   withdrawHundredActionCreator,
+  withdrawCustomAmountActionCreator,
 } from '../store/reducers/bankReducer';
 
-// Component
-function Atm(props) {
-  console.log({ props });
+// Component -- refactor Atm component from functional to class component
+// in that way we will be able to manage locate state
+// and such, we can manage the state of user input then use it in redux store
+class Atm extends Component {
+  constructor() {
+    super();
+    this.state = {
+      customAmount: '',
+      validCustomAmount: true,
+      disabledCustomAmount: true,
+    };
+  }
 
-  return (
-    <div className="atm">
-      <div className="terminal">
-        <h1 className="balance">$ {props.balance}</h1>
-      </div>
+  handleChange(event) {
+    const curCustomAmount = event.target.value;
 
-      <div className="terminal">
-        <button type="button" onClick={() => props.depositFiftyAction()}>
-          Deposit $ 50
-        </button>
+    if(!isNaN(curCustomAmount) && curCustomAmount.length !== 0) {
+      this.setState({ 
+        // parseInt or cast string to a number
+        customAmount: Number(curCustomAmount),
+        validCustomAmount: true,
+        disabledCustomAmount: false, 
+      });
+    } else {
+      this.setState({ 
+        validCustomAmount: false,
+        disabledCustomAmount: true,
+      }); 
+    }
+  }
 
-        <button type="button" onClick={() => props.withdrawFiftyAction()}>
-          Withdraw $ 50
-        </button>
 
-        <button type="button" onClick={() => props.depositHundredAction()}>
-          Deposit $ 100
-        </button>
+  render() {
 
-        <button type="button" onClick={() => props.withdrawHundredAction()}>
-          Withdraw $ 100
-        </button>
-      </div>
+    console.log(this.props);
 
-      <div className="terminal">
-        <div className="custom-amount-container">
-          <input
-            className="custom-amount-containee"
-            type="text"
-            placeholder="Enter Custom Amount"
-            required
-            onChange={event => console.log(event.target.value)}
-          />
+    return (
+      <div className="atm">
+        <div className="terminal">
+          <h1 className="balance">$ {this.props.balance}</h1>
         </div>
 
-        <button
-          type="button"
-          value="Deposit"
-          disabled={false}
-          onClick={() => console.log('Deposit Custom Amount')}
-        >
-          Deposit $
+        <div className="terminal">
+          <button type="button" onClick={() => this.props.depositFiftyAction()}>
+            Deposit $ 50
         </button>
 
-        <button
-          type="button"
-          value="Withdraw"
-          disabled={false}
-          onClick={() => console.log('Withdraw Custom Amount')}
-        >
-          Withdraw $
+          <button type="button" onClick={() => this.props.withdrawFiftyAction()}>
+            Withdraw $ 50
         </button>
+
+          <button type="button" onClick={() => this.props.depositHundredAction()}>
+            Deposit $ 100
+        </button>
+
+          <button type="button" onClick={() => this.props.withdrawHundredAction()}>
+            Withdraw $ 100
+        </button>
+        </div>
+
+        <div className="terminal">
+          <div className="custom-amount-container">
+            <input
+              className="custom-amount-containee"
+              type="text"
+              placeholder="Enter Custom Amount"
+              required
+              onChange={event => this.handleChange(event)}
+            />
+          </div>
+
+          <button
+            type="button"
+            value="Deposit"
+            disabled={this.state.disabledCustomAmount}
+            onClick={() => this.props.depositCustomAmountAction(this.state.customAmount)}
+          >
+            Deposit $
+        </button>
+
+          <button
+            type="button"
+            value="Withdraw"
+            disabled={this.state.disabledCustomAmount}
+            onClick={() => this.props.withdrawCustomAmountAction(this.state.customAmount)}
+          >
+            Withdraw $
+        </button>
+        </div>
+
+        {this.state.validCustomAmount ? null : 
+        <div className="terminal">Invalid Custom Amount! Please Try Again.</div>}
       </div>
-
-      <div className="terminal">Invalid Custom Amount! Please Try Again.</div>
-    </div>
-  );
+    );
+  }
 }
 
 // Container to handle reading (mapState) and writing (mapDispatch) in regards to the redux store;
@@ -93,11 +129,17 @@ const mapDispatchToProps = dispatch => {
     depositHundredAction() {
       dispatch(depositHundredActionCreator());
     },
+    depositCustomAmountAction(customAmount) {
+      dispatch(depositCustomAmountActionCreator(customAmount));
+    },
     withdrawFiftyAction() {
       dispatch(withdrawFiftyActionCreator());
     },
     withdrawHundredAction() {
       dispatch(withdrawHundredActionCreator());
+    },
+    withdrawCustomAmountAction(customAmount) {
+      dispatch(withdrawCustomAmountActionCreator(customAmount));
     },
   };
 };

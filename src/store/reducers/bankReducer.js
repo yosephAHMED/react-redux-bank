@@ -6,6 +6,8 @@ const initialState = {
 // Actions Types
 const DEPOSIT_FIFTY = 'DEPOSIT_FIFTY';
 const DEPOSIT_HUNDRED = 'DEPOSIT_HUNDRED';
+const DEPOSIT_CUSTOM_AMOUNT = 'DEPOSIT_CUSTOM_AMOUNT';
+const WITHDRAW_CUSTOM_AMOUNT = 'WITHDRAW_CUSTOM_AMOUNT';
 const WITHDRAW_FIFTY = 'WITHDRAW_FIFTY';
 const WITHDRAW_HUNDRED = 'WITHDRAW_HUNDRED';
 
@@ -18,12 +20,22 @@ export const depositHundredActionCreator = () => ({
   type: DEPOSIT_HUNDRED,
 });
 
+export const depositCustomAmountActionCreator = (number) => ({
+  type: DEPOSIT_CUSTOM_AMOUNT,
+  payload: number,
+});
+
 export const withdrawFiftyActionCreator = () => ({
   type: WITHDRAW_FIFTY,
 });
 
 export const withdrawHundredActionCreator = () => ({
   type: WITHDRAW_HUNDRED,
+});
+
+export const withdrawCustomAmountActionCreator = (number) => ({
+  type: WITHDRAW_CUSTOM_AMOUNT,
+  payload: number,
 });
 
 // Reducer
@@ -42,6 +54,12 @@ const bankReducer = (state = initialState, action) => {
         balance: state.balance + 100,
       };
 
+     case DEPOSIT_CUSTOM_AMOUNT:
+       return {
+         ...state,
+         balance: state.balance + action.payload,
+       } 
+
     case WITHDRAW_FIFTY:
       return {
         ...state,
@@ -52,6 +70,12 @@ const bankReducer = (state = initialState, action) => {
       return {
         ...state,
         balance: state.balance - 100,
+      };
+
+    case WITHDRAW_CUSTOM_AMOUNT:
+      return {
+        ...state,
+        balance: state.balance - action.payload,
       };
 
     default:
